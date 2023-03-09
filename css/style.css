@@ -1,0 +1,60 @@
+.Board {
+}
+h2 {
+  text-align: center;
+  margin-bottom: 3.2rem;
+  font-size: 4.4rem;
+  color: white;
+  font-weight: 600;
+}
+h4 {
+  text-align: center;
+  color: white;
+  font-size: 2.4rem;
+  font-weight: 500;
+  margin-bottom: 1.6rem;
+}
+.board-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 6.4rem;
+}
+/* .input-container{
+  visibility: hidden;
+} */
+.general {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+/* for input container */
+ion-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 30px;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.specil-icon {
+  right: 5px;
+}
+
+#input-task {
+  padding: 1.4rem;
+  font-size: 1.6rem;
+  color: black;
+  font-weight: 600;
+}
+.btn_add {
+  background-color: #00866d;
+  color: white;
+  font-size: 1.8rem;
+}
+.board-content > div > div {
+  position: relative;
+}
+.droppable{
+  background: firebrick;
+}
