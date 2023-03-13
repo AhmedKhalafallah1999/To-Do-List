@@ -18,7 +18,6 @@ function addTaskHandler(destination) {
   }
 
   const createDiv = document.createElement("div");
-
   createDiv.className = "Item";
   createDiv.innerHTML = `
   <input id="input-task" type="text" placeholder="enter a task" value="" draggable="true"/>
@@ -45,6 +44,7 @@ function addTaskHandler(destination) {
   iconRemove.addEventListener("click", function () {
     createDiv.remove();
   });
+  storeData();
 }
 function validateBeforeAddAnotherTask(areaOfInsertion) {
   const checkEmpty = areaOfInsertion.previousElementSibling;
@@ -74,12 +74,44 @@ function dragItem() {
 
       area.addEventListener("drop", (event) => {
         area.lastElementChild.before(drag, area.lastElementChild);
+        storeData();
       });
     });
   });
 }
+// ****************************************************************
+// local storage
+function storeData() {
+  const notStarted = [];
+  const inProgress = [];
+  const completed = [];
+  const notStartedTasks = notStartedArea.querySelectorAll(".Item");
+  const inProgressTasks = inProgressArea.querySelectorAll(".Item");
+  const completedTasks = completedArea.querySelectorAll(".Item");
+  notStartedTasks.forEach((item) => {
+    notStarted.push(item.textContent);
+  });
+  localStorage.setItem("notStarted", notStarted);
+  inProgressTasks.forEach((item) => {
+    inProgress.push(item.textContent);
+  });
+  localStorage.setItem("inProgress", inProgress);
+  completedTasks.forEach((item) => {
+    completed.push(item.textContent);
+  });
+  localStorage.setItem("completed", completed);
+}
 
 /* *************************************************************** */
+// display DATA
+window.onload = function () {
+  displayData();
+};
+function displayData() {
+  const notStartedContent = localStorage.getItem("notStarted");
+  console.log(notStartedContent);
+}
+/* **************************************************************** */
 /* Add Event Lisineres */
 notStartedAdd.addEventListener(
   "click",
