@@ -20,7 +20,7 @@ function addTaskHandler(destination) {
   const createDiv = document.createElement("div");
   createDiv.className = "Item";
   createDiv.innerHTML = `
-  <input id="input-task" type="text" placeholder="enter a task" value="" draggable="true"/>
+  <input id="input-task" type="text" placeholder="enter a task" draggable="true"/>
   <ion-icon class="edit" name="create-outline"></ion-icon>
   <ion-icon class="specil-icon remove" name="trash-outline"></ion-icon>
 `;
@@ -85,9 +85,9 @@ function storeData() {
   const notStarted = [];
   const inProgress = [];
   const completed = [];
-  const notStartedTasks = notStartedArea.querySelectorAll(".Item");
-  const inProgressTasks = inProgressArea.querySelectorAll(".Item");
-  const completedTasks = completedArea.querySelectorAll(".Item");
+  const notStartedTasks = notStartedArea.querySelectorAll(".Item input");
+  const inProgressTasks = inProgressArea.querySelectorAll(".Item input");
+  const completedTasks = completedArea.querySelectorAll(".Item input");
   notStartedTasks.forEach((item) => {
     notStarted.push(item.textContent);
   });
@@ -110,6 +110,18 @@ window.onload = function () {
 function displayData() {
   const notStartedContent = localStorage.getItem("notStarted");
   console.log(notStartedContent);
+  const inProgressContent = localStorage.getItem("inProgress");
+  const completeContent = localStorage.getItem("completed");
+  notStartedContent.forEach((task) => {
+    const createDiv = document.createElement("div");
+    createDiv.className = "Item";
+    createDiv.innerHTML = `
+    <input id="input-task" type="text" placeholder="enter a task" draggable="true"/>
+    <ion-icon class="edit" name="create-outline"></ion-icon>
+    <ion-icon class="specil-icon remove" name="trash-outline"></ion-icon>
+  `;
+    notStartedAdd.before(createDiv, notStartedAdd);
+  });
 }
 /* **************************************************************** */
 /* Add Event Lisineres */
