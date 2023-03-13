@@ -31,6 +31,7 @@ function addTaskHandler(destination) {
     inputField.textContent = e.target.value;
     inputField.value = e.target.value;
   });
+  storeData();
   inputField.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       inputField.setAttribute("readonly", true);
@@ -44,17 +45,17 @@ function addTaskHandler(destination) {
   iconRemove.addEventListener("click", function () {
     createDiv.remove();
   });
-  storeData();
 }
 function validateBeforeAddAnotherTask(areaOfInsertion) {
   const checkEmpty = areaOfInsertion.previousElementSibling;
   const text = checkEmpty.querySelector("#input-task");
-  if (text.textContent === "") {
+  if (text.value === "") {
     alert("Enter a task first, before making another vield");
     return true;
   }
 }
-
+/* *********************************************************************/
+// Drag Item
 function dragItem() {
   let items = document.querySelectorAll(".Item");
   items.forEach((item) => {
@@ -89,17 +90,20 @@ function storeData() {
   const inProgressTasks = inProgressArea.querySelectorAll(".Item input");
   const completedTasks = completedArea.querySelectorAll(".Item input");
   notStartedTasks.forEach((item) => {
+    if (item)
     notStarted.push(item.textContent);
   });
-  localStorage.setItem("notStarted", notStarted);
+  localStorage.setItem("notStarted", JSON.stringify(notStarted));
   inProgressTasks.forEach((item) => {
+    if (item)
     inProgress.push(item.textContent);
   });
-  localStorage.setItem("inProgress", inProgress);
+  localStorage.setItem("inProgress", JSON.stringify(inProgress));
   completedTasks.forEach((item) => {
+    if (item)
     completed.push(item.textContent);
   });
-  localStorage.setItem("completed", completed);
+  localStorage.setItem("completed", JSON.stringify(completed));
 }
 
 /* *************************************************************** */
@@ -108,20 +112,32 @@ window.onload = function () {
   displayData();
 };
 function displayData() {
-  const notStartedContent = localStorage.getItem("notStarted");
-  console.log(notStartedContent);
-  const inProgressContent = localStorage.getItem("inProgress");
-  const completeContent = localStorage.getItem("completed");
-  notStartedContent.forEach((task) => {
-    const createDiv = document.createElement("div");
-    createDiv.className = "Item";
-    createDiv.innerHTML = `
+  const notStartedContent = JSON.parse(localStorage.getItem("notStarted"));
+  const inProgressContent = JSON.parse(localStorage.getItem("inProgress"));
+  const completeContent = JSON.parse(localStorage.getItem("completed"));
+  renderDisplay(notStartedContent, notStartedAdd);
+  renderDisplay(inProgressContent, inProgressAdd);
+  renderDisplay(completeContent, completedAdd);
+}
+/* ************************************************************************* */
+/* Render on screen */
+function renderDisplay(target, append) {
+  if (target!==null){
+  target.forEach((task) => {
+    if (task) {
+      const createDiv = document.createElement("div");
+      createDiv.className = "Item";
+      createDiv.innerHTML = `
     <input id="input-task" type="text" placeholder="enter a task" draggable="true"/>
     <ion-icon class="edit" name="create-outline"></ion-icon>
     <ion-icon class="specil-icon remove" name="trash-outline"></ion-icon>
   `;
-    notStartedAdd.before(createDiv, notStartedAdd);
+      const inputField = createDiv.querySelector("#input-task");
+      inputField.value = task;
+      append.before(createDiv, append);
+    }
   });
+}
 }
 /* **************************************************************** */
 /* Add Event Lisineres */
