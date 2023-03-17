@@ -6,6 +6,7 @@ const completedArea = document.querySelector(".completed");
 const completedAdd = completedArea.querySelector("button");
 const dropArea = document.querySelectorAll(".board-content > div");
 let drag = null;
+
 function addTaskHandler(destination) {
   if (
     destination.previousElementSibling.textContent !== "Not Started" &&
@@ -31,20 +32,26 @@ function addTaskHandler(destination) {
     inputField.textContent = e.target.value;
     inputField.value = e.target.value;
   });
-  storeData();
-  inputField.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      inputField.setAttribute("readonly", true);
-    }
+  // inputField.addEventListener("keypress", function (e) {
+  //   if (e.key === "Enter") {
+  //     inputField.setAttribute("readonly", true);
+  //     storeData(destination);
+  //   }
+  // });
+  inputField.addEventListener("blur", function (e) {
+    inputField.setAttribute("readonly", true);
+    storeData(destination);
   });
   const iconEdit = createDiv.querySelector(".edit");
   iconEdit.addEventListener("click", function () {
     inputField.removeAttribute("readonly");
   });
   const iconRemove = createDiv.querySelector(".remove");
-  iconRemove.addEventListener("click", function () {
-    createDiv.remove();
-  });
+  // iconRemove.addEventListener("click", function () {
+  //   // renderEvents(createDiv);
+  //   createDiv.remove();
+  // });
+  deleteFromStorage(createDiv.parentElement, createDiv, inputField);
 }
 function validateBeforeAddAnotherTask(areaOfInsertion) {
   const checkEmpty = areaOfInsertion.previousElementSibling;
@@ -65,7 +72,6 @@ function dragItem() {
     });
     item.addEventListener("dragend", (event) => {
       item.style.opacity = "1";
-
       drag = null;
     });
     dropArea.forEach((area) => {
@@ -75,33 +81,79 @@ function dragItem() {
 
       area.addEventListener("drop", (event) => {
         area.lastElementChild.before(drag, area.lastElementChild);
-        storeData();
+        renderEvents(drag);
+        storeUpdate();
       });
     });
   });
 }
 // ****************************************************************
 // local storage
-function storeData() {
-  const notStarted = [];
-  const inProgress = [];
-  const completed = [];
+function storeData(destinaion) {
+  let notStarted;
+  let inProgress;
+  let completed;
+  const notStartedContent = JSON.parse(localStorage.getItem("notStarted"));
+  const inProgressContent = JSON.parse(localStorage.getItem("inProgress"));
+  const completeContent = JSON.parse(localStorage.getItem("completed"));
+
+  if (notStartedContent !== null) {
+    notStarted = notStartedContent;
+  } else {
+    notStarted = [];
+  }
+  if (inProgressContent !== null) {
+    inProgress = inProgressContent;
+  } else {
+    inProgress = [];
+  }
+  if (completeContent !== null) {
+    completed = completeContent;
+  } else {
+    completed = [];
+  }
+
+  if (destinaion.parentElement.className === "Not-Started general") {
+    const item = destinaion.previousElementSibling.querySelector("input");
+    if (item && item.textContent.trim().length > 0) {
+      notStarted.push(item.textContent);
+    }
+    localStorage.setItem("notStarted", JSON.stringify(notStarted));
+  } else if (destinaion.parentElement.className === "in-Progress general") {
+    const item = destinaion.previousElementSibling.querySelector("input");
+    if (item && item.textContent.trim().length > 0) {
+      inProgress.push(item.textContent);
+    }
+    localStorage.setItem("inProgress", JSON.stringify(inProgress));
+  } else if (destinaion.parentElement.className === "completed general") {
+    const item = destinaion.previousElementSibling.querySelector("input");
+    if (item && item.textContent.trim().length > 0) {
+      completed.push(item.textContent);
+    }
+    localStorage.setItem("completed", JSON.stringify(completed));
+  }
+}
+/**************************************************** */
+// store Update for Drag and Drop after reload
+function storeUpdate() {
+  let notStarted = [];
+  let inProgress = [];
+  let completed = [];
   const notStartedTasks = notStartedArea.querySelectorAll(".Item input");
   const inProgressTasks = inProgressArea.querySelectorAll(".Item input");
   const completedTasks = completedArea.querySelectorAll(".Item input");
   notStartedTasks.forEach((item) => {
-    if (item)
-    notStarted.push(item.textContent);
+    if (item && item.value.trim().length > 0) {
+      notStarted.push(item.value);
+    }
   });
   localStorage.setItem("notStarted", JSON.stringify(notStarted));
   inProgressTasks.forEach((item) => {
-    if (item)
-    inProgress.push(item.textContent);
+    if (item && item.value.trim().length > 0) inProgress.push(item.value);
   });
   localStorage.setItem("inProgress", JSON.stringify(inProgress));
   completedTasks.forEach((item) => {
-    if (item)
-    completed.push(item.textContent);
+    if (item && item.value.trim().length > 0) completed.push(item.value);
   });
   localStorage.setItem("completed", JSON.stringify(completed));
 }
@@ -118,27 +170,90 @@ function displayData() {
   renderDisplay(notStartedContent, notStartedAdd);
   renderDisplay(inProgressContent, inProgressAdd);
   renderDisplay(completeContent, completedAdd);
+  dragItem();
 }
 /* ************************************************************************* */
 /* Render on screen */
 function renderDisplay(target, append) {
-  if (target!==null){
-  target.forEach((task) => {
-    if (task) {
-      const createDiv = document.createElement("div");
-      createDiv.className = "Item";
-      createDiv.innerHTML = `
+  if (target !== null) {
+    target.forEach((task) => {
+      if (task) {
+        const createDiv = document.createElement("div");
+        createDiv.className = "Item";
+        createDiv.innerHTML = `
     <input id="input-task" type="text" placeholder="enter a task" draggable="true"/>
     <ion-icon class="edit" name="create-outline"></ion-icon>
     <ion-icon class="specil-icon remove" name="trash-outline"></ion-icon>
   `;
-      const inputField = createDiv.querySelector("#input-task");
-      inputField.value = task;
-      append.before(createDiv, append);
-    }
+        const inputField = createDiv.querySelector("#input-task");
+        inputField.value = task;
+        append.before(createDiv, append);
+        renderEvents(createDiv);
+      }
+    });
+  }
+}
+/************************************************************************/
+// render Events for each elements in local storage with events for edit and delete
+function renderEvents(createDiv) {
+  const inputField = createDiv.querySelector("#input-task");
+  createDiv.addEventListener("blur", function (e) {
+    inputField.setAttribute("readonly", true);
+    storeData(destination);
   });
+  const iconEdit = createDiv.querySelector(".edit");
+  iconEdit.addEventListener("click", function () {
+    inputField.removeAttribute("readonly");
+  });
+  deleteFromStorage(createDiv.parentElement, createDiv, inputField);
 }
+/* ****************************************************************** */
+/* delete elements from storage */
+function deleteFromStorage(destinaion, createDiv, inputField) {
+  const iconRemove = createDiv.querySelector(".remove");
+  if (destinaion.className === "Not-Started general") {
+    iconRemove.addEventListener("click", function () {
+      let notStarted = [];
+      const notStartedContent = JSON.parse(localStorage.getItem("notStarted"));
+      notStartedContent.forEach((item) => {
+        if (item !== inputField.value) {
+          notStarted.push(item);
+        }
+      });
+      // localStorage.removeItem("notStarted");
+      localStorage.setItem("notStarted", JSON.stringify(notStarted));
+      createDiv.remove();
+    });
+  } else if (destinaion.className === "in-Progress general") {
+    iconRemove.addEventListener("click", function () {
+      let inProgress = [];
+      const inProgressContent = JSON.parse(localStorage.getItem("inProgress"));
+      inProgressContent.forEach((item) => {
+        if (item !== inputField.value) {
+          inProgress.push(item);
+        }
+      });
+      // localStorage.removeItem("notStarted");
+      localStorage.setItem("inProgress", JSON.stringify(inProgress));
+      createDiv.remove();
+    });
+  }
+  if (destinaion.className === "completed general") {
+    iconRemove.addEventListener("click", function () {
+      let completed = [];
+      const completedContent = JSON.parse(localStorage.getItem("completed"));
+      completedContent.forEach((item) => {
+        if (item !== inputField.value) {
+          completed.push(item);
+        }
+      });
+      // localStorage.removeItem("notStarted");
+      localStorage.setItem("completed", JSON.stringify(completed));
+      createDiv.remove();
+    });
+  }
 }
+
 /* **************************************************************** */
 /* Add Event Lisineres */
 notStartedAdd.addEventListener(
