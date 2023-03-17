@@ -32,7 +32,11 @@ instead, 1rem = 1 em = 16px */
 /**************************/
 
 @media (max-width: 34em) {
-  .board-content{
+  .Board {
+    max-width: 90%;
+    max-height: 80%;
+  }
+  .board-content {
     display: flex;
     flex-direction: column;
   }

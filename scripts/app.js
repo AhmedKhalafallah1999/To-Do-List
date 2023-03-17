@@ -252,10 +252,10 @@ function deleteFromStorage(destinaion, createDiv, inputField) {
 function editFromStorage(destinaion, createDiv, inputField) {
   const oldText = inputField.value;
   let newText;
-  console.log(oldText);
+
   inputField.addEventListener("blur", function (e) {
     newText = inputField.value;
-    console.log(newText);
+
     if (destinaion.className === "Not-Started general") {
       let notStarted = [];
       const notStartedContent = JSON.parse(localStorage.getItem("notStarted"));
