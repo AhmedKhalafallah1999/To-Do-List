@@ -32,8 +32,9 @@ instead, 1rem = 1 em = 16px */
 /**************************/
 
 @media (max-width: 34em) {
-  .grid {
-    row-gap: 4.8rem;
+  .board-content{
+    display: flex;
+    flex-direction: column;
   }
 }
 /* 

@@ -1,7 +1,16 @@
+* {
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  background-attachment: scroll;
+}
 .Board {
+  max-height: 100%;
+  position: static;
 }
 h2 {
   text-align: center;
+  align-items: center;
   margin-bottom: 3.2rem;
   font-size: 4.4rem;
   color: white;
@@ -55,6 +64,37 @@ ion-icon {
 .board-content > div > div {
   position: relative;
 }
-.droppable{
+.droppable {
   background: firebrick;
+}
+/* *********************************************** */
+/*Footer with waves*/
+
+.footer {
+  background: #05b3a4;
+  min-height: 100px;
+  padding: 20px 50px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  position: static;
+  border-radius: 5px;
+}
+
+.footer p {
+  color: #fff;
+  margin: 15px 0 10px 0;
+  font-size: 1.6rem;
+  font-weight: 300;
+  text-align: center;
+}
+.footer .quote {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.6;
+  font-style: italic;
+  background-color: black;
+  padding: 10px;
+  border-radius: 5px;
 }
