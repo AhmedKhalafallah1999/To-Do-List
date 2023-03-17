@@ -4,11 +4,16 @@ To do list with Java Script by using HTML, CSS, and Java Script with using Local
 
 # Kanban Board Project
 
+
 This project is a Kanban Board built using HTML, CSS, and Vanilla JavaScript. It was created as part of the [Kalbonyan elmarsos competition](https://www.albonyanalmarsos.org/).
 
 ## Demo
 
 You can view a live demo of the project at [Kanban Board]().
+
+
+https://user-images.githubusercontent.com/52683244/225976197-0950e5d8-b097-44ed-9219-240c1e8c73f7.mp4
+
 
 ## Technologies Used
 
