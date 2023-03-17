@@ -45,12 +45,9 @@ function addTaskHandler(destination) {
   const iconEdit = createDiv.querySelector(".edit");
   iconEdit.addEventListener("click", function () {
     inputField.removeAttribute("readonly");
+    editFromStorage(createDiv.parentElement, createDiv, inputField);
   });
   const iconRemove = createDiv.querySelector(".remove");
-  // iconRemove.addEventListener("click", function () {
-  //   // renderEvents(createDiv);
-  //   createDiv.remove();
-  // });
   deleteFromStorage(createDiv.parentElement, createDiv, inputField);
 }
 function validateBeforeAddAnotherTask(areaOfInsertion) {
@@ -206,6 +203,7 @@ function renderEvents(createDiv) {
     inputField.removeAttribute("readonly");
   });
   deleteFromStorage(createDiv.parentElement, createDiv, inputField);
+  editFromStorage(createDiv.parentElement, createDiv, inputField);
 }
 /* ****************************************************************** */
 /* delete elements from storage */
@@ -220,7 +218,6 @@ function deleteFromStorage(destinaion, createDiv, inputField) {
           notStarted.push(item);
         }
       });
-      // localStorage.removeItem("notStarted");
       localStorage.setItem("notStarted", JSON.stringify(notStarted));
       createDiv.remove();
     });
@@ -233,12 +230,10 @@ function deleteFromStorage(destinaion, createDiv, inputField) {
           inProgress.push(item);
         }
       });
-      // localStorage.removeItem("notStarted");
       localStorage.setItem("inProgress", JSON.stringify(inProgress));
       createDiv.remove();
     });
-  }
-  if (destinaion.className === "completed general") {
+  } else if (destinaion.className === "completed general") {
     iconRemove.addEventListener("click", function () {
       let completed = [];
       const completedContent = JSON.parse(localStorage.getItem("completed"));
@@ -247,11 +242,55 @@ function deleteFromStorage(destinaion, createDiv, inputField) {
           completed.push(item);
         }
       });
-      // localStorage.removeItem("notStarted");
       localStorage.setItem("completed", JSON.stringify(completed));
       createDiv.remove();
     });
   }
+}
+/* ****************************************************************** */
+/* edit elements from storage */
+function editFromStorage(destinaion, createDiv, inputField) {
+  const oldText = inputField.value;
+  let newText;
+  console.log(oldText);
+  inputField.addEventListener("blur", function (e) {
+    newText = inputField.value;
+    console.log(newText);
+    if (destinaion.className === "Not-Started general") {
+      let notStarted = [];
+      const notStartedContent = JSON.parse(localStorage.getItem("notStarted"));
+      notStartedContent.forEach((item) => {
+        if (item !== oldText) {
+          notStarted.push(item);
+        } else {
+          notStarted.push(newText);
+        }
+      });
+      localStorage.setItem("notStarted", JSON.stringify(notStarted));
+    } else if (destinaion.className === "in-Progress general") {
+      let inProgress = [];
+      const inProgressContent = JSON.parse(localStorage.getItem("inProgress"));
+      inProgressContent.forEach((item) => {
+        if (item !== oldText) {
+          inProgress.push(item);
+        } else {
+          inProgress.push(newText);
+        }
+      });
+      localStorage.setItem("inProgress", JSON.stringify(inProgress));
+    } else if (destinaion.className === "completed general") {
+      let completed = [];
+      const completedContent = JSON.parse(localStorage.getItem("completed"));
+      completedContent.forEach((item) => {
+        if (item !== oldText) {
+          completed.push(item);
+        } else {
+          completed.push(newText);
+        }
+      });
+      localStorage.setItem("completed", JSON.stringify(completed));
+    }
+  });
 }
 
 /* **************************************************************** */
